@@ -17,7 +17,7 @@ public class Transaction {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="account_owner_id")
-    private Account accountOwner;
+    private Account account;
 
     public Transaction() {
     }
@@ -61,12 +61,12 @@ public class Transaction {
         return date;
     }
 
-    public Account getAccountOwner() {
-        return accountOwner;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setAccountOwner(Account accountOwner) {
-        this.accountOwner = accountOwner;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public void setDate(LocalDateTime date) {

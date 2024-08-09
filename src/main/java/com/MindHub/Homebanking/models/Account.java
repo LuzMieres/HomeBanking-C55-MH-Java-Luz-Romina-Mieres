@@ -10,28 +10,37 @@ import java.util.Set;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     private String number;
-    private double balance;
     private LocalDate creationDate;
+    private double balance;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="owner_id")
-    private Client owner;
+    @JoinColumn(name = "client_id")
+    private Client client;
 
-    @OneToMany(mappedBy="accountOwner", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
     private Set<Transaction> transactions = new HashSet<>();
 
     public Account() {
     }
 
-    public Account(String number, double balance, LocalDate creationDate) {
+    public Account(String number, LocalDate creationDate, double balance) {
         this.number = number;
-        this.balance = balance;
         this.creationDate = creationDate;
+        this.balance = balance;
+
     }
 
-    public Long getId() {
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public long getId() {
         return id;
     }
 
@@ -43,14 +52,6 @@ public class Account {
         this.number = number;
     }
 
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
-
     public LocalDate getCreationDate() {
         return creationDate;
     }
@@ -59,12 +60,17 @@ public class Account {
         this.creationDate = creationDate;
     }
 
-    public Client getOwner() {
-        return owner;
+    public double getBalance() {
+        return balance;
     }
 
-    public void setOwner(Client owner) {
-        this.owner = owner;
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public void addTransaction(Transaction transaction) {
+        this.transactions.add(transaction);
+        transaction.setAccount(this);
     }
 
     public Set<Transaction> getTransactions() {
@@ -80,14 +86,9 @@ public class Account {
         return "Account{" +
                 "id=" + id +
                 ", number='" + number + '\'' +
-                ", balance=" + balance +
                 ", creationDate=" + creationDate +
+                ", balance=" + balance +
                 ", transactions=" + transactions +
                 '}';
-    }
-
-    public void addTransaction(Transaction transaction) {
-        transaction.setAccountOwner(this);
-        transactions.add(transaction);
     }
 }

@@ -2,27 +2,39 @@ package com.MindHub.Homebanking.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 public class Client {
+    @Id   //aca indico que esta va a ser la clave primaria
+    @GeneratedValue(strategy = GenerationType.IDENTITY)   //y aca le pido a la base de datos que genere el id
+    private long id;
+
     private String firstName;
     private String lastName;
     private String email;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @OneToMany(mappedBy="owner", fetch=FetchType.EAGER)
-    Set<Account> accounts = new HashSet<>();
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<Account>accounts = new HashSet<>();
 
-    public Client() {
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private List<ClientLoan> clientLoans = new ArrayList<>();
+
+    public Client() { }  //este lo usa hibernate por defecto para validar. tener espacio en memoria
+
+    public Client(String first, String last, String email) {
+        this.firstName = first;
+        this.lastName = last;
+        this.email= email;
+    }
+    public String getEmail() {
+        return email;
     }
 
-    public Client(String firstName, String lastName, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public void setEmail(String email) {
         this.email = email;
     }
 
@@ -41,40 +53,38 @@ public class Client {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public Set<Account> getAccounts() {
+    public Set<Account> getAccounts() { //coleccion de cuentas
+
         return accounts;
     }
 
-    public void setAccounts(Set<Account> accounts) {
-        this.accounts = accounts;
+    public List<ClientLoan> getClientLoans() {
+        return clientLoans;
+    }
+
+    public void addAccount(Account account) {
+        this.accounts.add(account);
+        account.setClient(this);
     }
 
     @Override
     public String toString() {
         return "Client{" +
-                "firstName='" + firstName + '\'' +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", id=" + id +
                 ", accounts=" + accounts +
+                ", clientLoans=" + clientLoans +
                 '}';
     }
 
-    public void addAccount(Account account) {
-        account.setOwner(this);
-        accounts.add(account);
+    public void addClientLoan(ClientLoan clientLoan) {
+        this.clientLoans.add(clientLoan);
+        clientLoan.setClient(this);
     }
 }
