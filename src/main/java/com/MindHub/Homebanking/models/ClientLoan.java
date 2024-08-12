@@ -7,7 +7,6 @@ public class ClientLoan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     private double amount;
     private int payments;
 
@@ -22,8 +21,7 @@ public class ClientLoan {
     public ClientLoan() {
     }
 
-    public ClientLoan(String name, double amount, int payments) {
-        this.name = name;
+    public ClientLoan(double amount, int payments) {
         this.amount = amount;
         this.payments = payments;
     }
@@ -64,19 +62,11 @@ public class ClientLoan {
         this.loan = loan;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public String toString() {
         return "ClientLoan{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
                 ", amount=" + amount +
                 ", payments=" + payments +
                 '}';

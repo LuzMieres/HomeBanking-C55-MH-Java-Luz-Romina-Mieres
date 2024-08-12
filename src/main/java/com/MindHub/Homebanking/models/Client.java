@@ -9,8 +9,8 @@ import java.util.Set;
 
 @Entity
 public class Client {
-    @Id   //aca indico que esta va a ser la clave primaria
-    @GeneratedValue(strategy = GenerationType.IDENTITY)   //y aca le pido a la base de datos que genere el id
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String firstName;
@@ -23,7 +23,7 @@ public class Client {
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private List<ClientLoan> clientLoans = new ArrayList<>();
 
-    public Client() { }  //este lo usa hibernate por defecto para validar. tener espacio en memoria
+    public Client() { }
 
     public Client(String first, String last, String email) {
         this.firstName = first;
@@ -57,7 +57,7 @@ public class Client {
         return id;
     }
 
-    public Set<Account> getAccounts() { //coleccion de cuentas
+    public Set<Account> getAccounts() {
 
         return accounts;
     }

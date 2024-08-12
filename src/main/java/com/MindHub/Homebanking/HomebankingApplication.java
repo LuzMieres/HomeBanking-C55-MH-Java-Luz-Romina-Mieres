@@ -46,27 +46,28 @@ public class HomebankingApplication {
 			transactionRepository.save(transferenciaRecibida2Melba);
 			transactionRepository.save(pagoInternetMelba);
 
-			//Loans Client Melba
-			Loan hipotecarioMelba = new Loan("Hipotecario", 500000, Arrays.asList(12, 24, 36, 48, 60, 72));
-			Loan personalMelba = new Loan("Personal", 100000, Arrays.asList(6, 12, 24));
-			Loan automotrizMelba = new Loan("Automotriz", 300000, Arrays.asList(6, 12, 24, 36));
-			loanRepository.save(hipotecarioMelba);
-			loanRepository.save(personalMelba);
-			loanRepository.save(automotrizMelba);
+			//Loans
+			Loan hipotecario = new Loan("Hipotecario", 500000, Arrays.asList(12, 24, 36, 48, 60, 72));
+			Loan personal = new Loan("Personal", 100000, Arrays.asList(6, 12, 24));
+			Loan automotriz = new Loan("Automotriz", 300000, Arrays.asList(6, 12, 24, 36));
+			loanRepository.save(hipotecario);
+			loanRepository.save(personal);
+			loanRepository.save(automotriz);
 
-			ClientLoan hipotecarioLoanMelba = new ClientLoan("Hipotecario",400000, 48);
+			//Loans Client Melba
+			ClientLoan hipotecarioLoanMelba = new ClientLoan(400000, 48);
 			melba.addClientLoan(hipotecarioLoanMelba);
-			hipotecarioMelba.addClientLoan(hipotecarioLoanMelba);
+			hipotecario.addClientLoan(hipotecarioLoanMelba);
 			clientLoanRepository.save(hipotecarioLoanMelba);
 
-			ClientLoan personalLoanMelba = new ClientLoan("Personal",100000, 12);
+			ClientLoan personalLoanMelba = new ClientLoan(100000, 12);
 			melba.addClientLoan(personalLoanMelba);
-			personalMelba.addClientLoan(personalLoanMelba);
+			personal.addClientLoan(personalLoanMelba);
 			clientLoanRepository.save(personalLoanMelba);
 
-			ClientLoan automotrizLoanMelba = new ClientLoan("Automotriz",250000, 36);
+			ClientLoan automotrizLoanMelba = new ClientLoan(250000, 36);
 			melba.addClientLoan(automotrizLoanMelba);
-			automotrizMelba.addClientLoan(automotrizLoanMelba);
+			automotriz.addClientLoan(automotrizLoanMelba);
 			clientLoanRepository.save(automotrizLoanMelba);
 
 
@@ -98,26 +99,19 @@ public class HomebankingApplication {
 
 
 			//Loans Client Ana
-			Loan hipotecarioAna = new Loan("Hipotecario", 500000, Arrays.asList(12, 24, 36, 48, 60, 72));
-			Loan personalAna = new Loan("Personal", 100000, Arrays.asList(6, 12, 24));
-			Loan automotrizAna = new Loan("Automotriz", 300000, Arrays.asList(6, 12, 24, 36));
-			loanRepository.save(hipotecarioAna);
-			loanRepository.save(personalAna);
-			loanRepository.save(automotrizAna);
-
-			ClientLoan hipotecarioLoanAna = new ClientLoan("Hipotecario",300000, 36);
+			ClientLoan hipotecarioLoanAna = new ClientLoan(300000, 36);
 			ana.addClientLoan(hipotecarioLoanAna);
-			hipotecarioAna.addClientLoan(hipotecarioLoanAna);
+			hipotecario.addClientLoan(hipotecarioLoanAna);
 			clientLoanRepository.save(hipotecarioLoanAna);
 
-			ClientLoan personalLoanAna = new ClientLoan("Personal",80000, 12);
+			ClientLoan personalLoanAna = new ClientLoan(80000, 12);
 			ana.addClientLoan(personalLoanAna);
-			personalAna.addClientLoan(personalLoanAna);
+			personal.addClientLoan(personalLoanAna);
 			clientLoanRepository.save(personalLoanAna);
 
-			ClientLoan automotrizLoanAna = new ClientLoan("Automotriz",200000, 24);
+			ClientLoan automotrizLoanAna = new ClientLoan(200000, 24);
 			ana.addClientLoan(automotrizLoanAna);
-			automotrizAna.addClientLoan(automotrizLoanAna);
+			automotriz.addClientLoan(automotrizLoanAna);
 			clientLoanRepository.save(automotrizLoanAna);
 
 
@@ -148,26 +142,19 @@ public class HomebankingApplication {
 			transactionRepository.save(pagoInternetLuz);
 
 			//Loans Client Luz
-			Loan hipotecarioLuz = new Loan("Hipotecario", 500000, Arrays.asList(12, 24, 36, 48, 60, 72));
-			Loan personalLuz = new Loan("Personal", 100000, Arrays.asList(6,12,24));
-			Loan automotrizLuz = new Loan("Automotriz", 300000, Arrays.asList(6,12,24,36));
-			loanRepository.save(hipotecarioLuz);
-			loanRepository.save(personalLuz);
-			loanRepository.save(automotrizLuz);
-
-			ClientLoan hipotecarioLoanLuz = new ClientLoan("Hipotecario",500000, 60);
+			ClientLoan hipotecarioLoanLuz = new ClientLoan(500000, 60);
 			luz.addClientLoan(hipotecarioLoanLuz);
-			hipotecarioLuz.addClientLoan(hipotecarioLoanLuz);
+			hipotecario.addClientLoan(hipotecarioLoanLuz);
 			clientLoanRepository.save(hipotecarioLoanLuz);
 
-			ClientLoan personalLoanLuz = new ClientLoan("Personal",100000, 24);
+			ClientLoan personalLoanLuz = new ClientLoan(100000, 24);
 			luz.addClientLoan(personalLoanLuz);
-			personalLuz.addClientLoan(personalLoanLuz);
+			personal.addClientLoan(personalLoanLuz);
 			clientLoanRepository.save(personalLoanLuz);
 
-			ClientLoan automotrizLoanLuz = new ClientLoan("Automotriz",300000, 36);
+			ClientLoan automotrizLoanLuz = new ClientLoan(300000, 36);
 			luz.addClientLoan(automotrizLoanLuz);
-			automotrizLuz.addClientLoan(automotrizLoanLuz);
+			automotriz.addClientLoan(automotrizLoanLuz);
 			clientLoanRepository.save(automotrizLoanLuz);
 
 			//Souts de los 3 Clients
