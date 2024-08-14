@@ -23,6 +23,9 @@ public class Client {
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private List<ClientLoan> clientLoans = new ArrayList<>();
 
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private List<Card> cards = new ArrayList<>();
+
     public Client() { }
 
     public Client(String first, String last, String email) {
@@ -66,9 +69,12 @@ public class Client {
         return clientLoans;
     }
 
-    public void addAccount(Account account) {
-        this.accounts.add(account);
-        account.setClient(this);
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 
     @Override
@@ -80,11 +86,23 @@ public class Client {
                 ", email='" + email + '\'' +
                 ", accounts=" + accounts +
                 ", clientLoans=" + clientLoans +
+                ", cards=" + cards +
                 '}';
+    }
+
+    public void addAccount(Account account) {
+        this.accounts.add(account);
+        account.setClient(this);
     }
 
     public void addClientLoan(ClientLoan clientLoan) {
         this.clientLoans.add(clientLoan);
         clientLoan.setClient(this);
+    }
+
+    public void addCard(Card card){
+        this.cards.add(card);
+        card.setClient(this);
+        card.setCardHolder(this.getFirstName() + " " + this.getLastName());
     }
 }

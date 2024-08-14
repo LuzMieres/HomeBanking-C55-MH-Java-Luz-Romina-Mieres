@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Random;
 
 @SpringBootApplication
 public class HomebankingApplication {
@@ -18,7 +19,7 @@ public class HomebankingApplication {
 		SpringApplication.run(HomebankingApplication.class, args);
 	}
 	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository) {
+	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository) {
 		return args -> {
 			//Client Melba
 			Client melba = new Client("Melba", "Morel", "melbamorel@gmailcom");
@@ -70,6 +71,44 @@ public class HomebankingApplication {
 			automotriz.addClientLoan(automotrizLoanMelba);
 			clientLoanRepository.save(automotrizLoanMelba);
 
+			//Cards
+			//DEBIT CARDS
+			Card debitCardGold = new Card(CardType.DEBIT, ColorType.GOLD, LocalDate.now(), LocalDate.now().plusYears(5));
+			debitCardGold.setNumber(debitCardGold.generarNumeroTarjeta());
+			debitCardGold.setCvv(debitCardGold.generarCVV());
+
+
+			Card debitCardSilver = new Card(CardType.DEBIT, ColorType.SILVER, LocalDate.now(), LocalDate.now().plusYears(5));
+			debitCardSilver.setNumber(debitCardSilver.generarNumeroTarjeta());
+			debitCardSilver.setCvv(debitCardSilver.generarCVV());
+
+
+			Card debitCardTitanium = new Card(CardType.DEBIT, ColorType.TITANIUM, LocalDate.now(), LocalDate.now().plusYears(5));
+			debitCardTitanium.setNumber(debitCardTitanium.generarNumeroTarjeta());
+			debitCardTitanium.setCvv(debitCardGold.generarCVV());
+
+
+			//CREDIT CARDS
+			Card creditCardGold = new Card(CardType.CREDIT, ColorType.GOLD, LocalDate.now(), LocalDate.now().plusYears(5));
+			creditCardGold.setNumber(creditCardGold.generarNumeroTarjeta());
+			creditCardGold.setCvv(creditCardGold.generarCVV());
+
+
+			Card creditCardSilver = new Card(CardType.CREDIT, ColorType.SILVER, LocalDate.now(), LocalDate.now().plusYears(5));
+			creditCardSilver.setNumber(creditCardSilver.generarNumeroTarjeta());
+			creditCardSilver.setCvv(creditCardGold.generarCVV());
+
+
+			Card creditCardTitanium = new Card(CardType.CREDIT, ColorType.TITANIUM, LocalDate.now(), LocalDate.now().plusYears(5));
+			creditCardTitanium.setNumber(creditCardTitanium.generarNumeroTarjeta());
+			creditCardTitanium.setCvv(creditCardTitanium.generarCVV());
+
+			//Añado las tarjetas de Melba
+			melba.addCard(debitCardGold);
+			cardRepository.save(debitCardGold);
+			melba.addCard(creditCardTitanium);
+			cardRepository.save(creditCardTitanium);
+
 
 			//Client Ana
 			Client ana = new Client("Ana", "Gonzalez", "anagonzalez@gmail.com");
@@ -114,6 +153,12 @@ public class HomebankingApplication {
 			automotriz.addClientLoan(automotrizLoanAna);
 			clientLoanRepository.save(automotrizLoanAna);
 
+			//Añado las cards de Ana
+			ana.addCard(debitCardSilver);
+			cardRepository.save(debitCardSilver);
+			ana.addCard(creditCardGold);
+			cardRepository.save(creditCardGold);
+
 
 			//Client Luz
 			Client luz = new Client("Luz", "Mieres", "luzmieres@gmail.com");
@@ -156,6 +201,13 @@ public class HomebankingApplication {
 			luz.addClientLoan(automotrizLoanLuz);
 			automotriz.addClientLoan(automotrizLoanLuz);
 			clientLoanRepository.save(automotrizLoanLuz);
+
+			//Añado las cards de Luz
+			luz.addCard(debitCardTitanium);
+			cardRepository.save(debitCardTitanium);
+			luz.addCard(creditCardSilver);
+			cardRepository.save(creditCardSilver);
+
 
 			//Souts de los 3 Clients
 			System.out.println(melba);
