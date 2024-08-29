@@ -2,18 +2,22 @@ package com.MindHub.Homebanking;
 
 import com.MindHub.Homebanking.models.*;
 import com.MindHub.Homebanking.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Random;
 
 @SpringBootApplication
 public class HomebankingApplication {
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(HomebankingApplication.class, args);
@@ -22,7 +26,7 @@ public class HomebankingApplication {
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository) {
 		return args -> {
 			//Client Melba
-			Client melba = new Client("Melba", "Morel", "melbamorel@gmailcom");
+			Client melba = new Client("Melba", "Morel", "melbamorel@mindhub.com", passwordEncoder.encode("123") );
 			clientRepository.save(melba);
 
 			//Account Client Melba
@@ -36,8 +40,8 @@ public class HomebankingApplication {
 			//Transactions Client Melba
 			Transaction pagoServicioLuzMelba = new Transaction(TransactionType.DEBIT, -3000, "DEBIN PAGO SERVICIO", LocalDateTime.now());
 			Transaction transferenciaRecibida1Melba = new Transaction(TransactionType.CREDIT, 1500, "CR INTERBANK", LocalDateTime.now().plusDays(1));
-			Transaction pagoInternetMelba = new Transaction(TransactionType.DEBIT, -1000, "DEBIN PAGO SERVICIO", LocalDateTime.now().plusDays(1));
-			Transaction transferenciaRecibida2Melba = new Transaction(TransactionType.CREDIT, 1000, "CR INTERBANK", LocalDateTime.now().plusDays(2));
+			Transaction pagoInternetMelba = new Transaction(TransactionType.DEBIT, -1000, "DEBIN PAGO SERVICIO", LocalDateTime.now().plusDays(2));
+			Transaction transferenciaRecibida2Melba = new Transaction(TransactionType.CREDIT, 1000, "CR INTERBANK", LocalDateTime.now().plusDays(3));
 			account1.addTransaction(pagoServicioLuzMelba);
 			account1.addTransaction(transferenciaRecibida1Melba);
 			account2.addTransaction(transferenciaRecibida2Melba);
@@ -74,7 +78,11 @@ public class HomebankingApplication {
 			//Cards
 			//DEBIT CARDS
 			Card debitCardGold = new Card(CardType.DEBIT, ColorType.GOLD, LocalDate.now(), LocalDate.now().plusYears(5));
-			debitCardGold.setNumber(debitCardGold.generarNumeroTarjeta());
+            String numeroTarjeta1 = debitCardGold.generarNumeroTarjeta();
+            String numeroTarjeta2 = debitCardGold.generarNumeroTarjeta();
+            String numeroTarjeta3 = debitCardGold.generarNumeroTarjeta();
+            String numeroTarjeta4 = debitCardGold.generarNumeroTarjeta();
+			debitCardGold.setNumber(numeroTarjeta1 + " " + " " + numeroTarjeta2 + " " + " " + numeroTarjeta3 + " " + " " + numeroTarjeta4);
 			debitCardGold.setCvv(debitCardGold.generarCVV());
 
 
@@ -100,7 +108,12 @@ public class HomebankingApplication {
 
 
 			Card creditCardTitanium = new Card(CardType.CREDIT, ColorType.TITANIUM, LocalDate.now(), LocalDate.now().plusYears(5));
-			creditCardTitanium.setNumber(creditCardTitanium.generarNumeroTarjeta());
+            String numeroTarjeta5 = creditCardTitanium.generarNumeroTarjeta();
+            String numeroTarjeta6 = creditCardTitanium.generarNumeroTarjeta();
+            String numeroTarjeta7 = creditCardTitanium.generarNumeroTarjeta();
+            String numeroTarjeta8 = creditCardTitanium.generarNumeroTarjeta();
+            creditCardTitanium .setNumber(numeroTarjeta5 + " " + " " + numeroTarjeta6 + " " + " " + numeroTarjeta7 + " " + " " + numeroTarjeta8);
+
 			creditCardTitanium.setCvv(creditCardTitanium.generarCVV());
 
 			//Añado las tarjetas de Melba
@@ -110,19 +123,19 @@ public class HomebankingApplication {
 			cardRepository.save(creditCardTitanium);
 
 
-			//Client Ana
-			Client ana = new Client("Ana", "Gonzalez", "anagonzalez@gmail.com");
+//			//Client Ana
+			Client ana = new Client("Ana", "Gonzalez", "anagonzalez@gmail.com", passwordEncoder.encode("123"));
 			clientRepository.save(ana);
-
-			//Accounts Client Ana
+//
+//			//Accounts Client Ana
 			Account account3 = new Account("VIN003", LocalDate.now(), 12000.0);
 			Account account4 = new Account("VIN004", LocalDate.now().plusDays(2), 13000.0);
 			ana.addAccount(account3);
 			ana.addAccount(account4);
 			accountRepository.save(account3);
 			accountRepository.save(account4);
-
-			//Transactions Client Ana
+//
+//			//Transactions Client Ana
 			Transaction pagoServicioAguaAna = new Transaction(TransactionType.DEBIT, -2000, "DEBIN PAGO SERVICIO", LocalDateTime.now());
 			Transaction transferenciaRecibida1Ana = new Transaction(TransactionType.CREDIT, 1000, "CR INTERBANK", LocalDateTime.now().plusDays(2));
 			Transaction pagoInternetAna = new Transaction(TransactionType.DEBIT, -1000, "DEBIN PAGO SERVICIO", LocalDateTime.now().plusDays(1));
@@ -137,12 +150,12 @@ public class HomebankingApplication {
 			transactionRepository.save(pagoInternetAna);
 
 
-			//Loans Client Ana
+//			//Loans Client Ana
 			ClientLoan hipotecarioLoanAna = new ClientLoan(300000, 36);
 			ana.addClientLoan(hipotecarioLoanAna);
 			hipotecario.addClientLoan(hipotecarioLoanAna);
 			clientLoanRepository.save(hipotecarioLoanAna);
-
+//
 			ClientLoan personalLoanAna = new ClientLoan(80000, 12);
 			ana.addClientLoan(personalLoanAna);
 			personal.addClientLoan(personalLoanAna);
@@ -152,27 +165,27 @@ public class HomebankingApplication {
 			ana.addClientLoan(automotrizLoanAna);
 			automotriz.addClientLoan(automotrizLoanAna);
 			clientLoanRepository.save(automotrizLoanAna);
-
-			//Añado las cards de Ana
+//
+//			//Añado las cards de Ana
 			ana.addCard(debitCardSilver);
 			cardRepository.save(debitCardSilver);
 			ana.addCard(creditCardGold);
 			cardRepository.save(creditCardGold);
-
-
-			//Client Luz
-			Client luz = new Client("Luz", "Mieres", "luzmieres@gmail.com");
+//
+//
+//			//Client Luz
+			Client luz = new Client("Luz", "Mieres", "luzmieres@gmail.com", passwordEncoder.encode("123"));
 			clientRepository.save(luz);
-
-			//Accounts ClientLuz
+//
+//			//Accounts ClientLuz
 			Account account5 = new Account("VIN005", LocalDate.now(), 14000.0);
 			Account account6 = new Account("VIN006", LocalDate.now().plusDays(3), 15000.0);
 			luz.addAccount(account5);
 			luz.addAccount(account6);
 			accountRepository.save(account5);
 			accountRepository.save(account6);
-
-			//Transactions Client Luz
+//
+//			//Transactions Client Luz
 			Transaction transferenciaEnviadaLuz = new Transaction(TransactionType.DEBIT, -3000, "DEBIN PAGO SERVICIO", LocalDateTime.now());
 			Transaction transferenciaRecibida1Luz = new Transaction(TransactionType.CREDIT, 2000, "CR INTERBANK", LocalDateTime.now().plusDays(3));
 			Transaction pagoInternetLuz = new Transaction(TransactionType.DEBIT, -1000, "DEBIN PAGO SERVICIO", LocalDateTime.now().plusDays(1));
@@ -186,7 +199,7 @@ public class HomebankingApplication {
 			transactionRepository.save(transferenciaRecibida2Luz);
 			transactionRepository.save(pagoInternetLuz);
 
-			//Loans Client Luz
+// 			Loans Client Luz
 			ClientLoan hipotecarioLoanLuz = new ClientLoan(500000, 60);
 			luz.addClientLoan(hipotecarioLoanLuz);
 			hipotecario.addClientLoan(hipotecarioLoanLuz);
@@ -196,13 +209,13 @@ public class HomebankingApplication {
 			luz.addClientLoan(personalLoanLuz);
 			personal.addClientLoan(personalLoanLuz);
 			clientLoanRepository.save(personalLoanLuz);
-
+//
 			ClientLoan automotrizLoanLuz = new ClientLoan(300000, 36);
 			luz.addClientLoan(automotrizLoanLuz);
 			automotriz.addClientLoan(automotrizLoanLuz);
 			clientLoanRepository.save(automotrizLoanLuz);
-
-			//Añado las cards de Luz
+//
+//			//Añado las cards de Luz
 			luz.addCard(debitCardTitanium);
 			cardRepository.save(debitCardTitanium);
 			luz.addCard(creditCardSilver);

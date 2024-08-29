@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
-@CrossOrigin(origins = "http://localhost:5173")
+
 @RestController
 @RequestMapping("/api/accounts")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
@@ -20,8 +20,10 @@ public class AccountController {
     @GetMapping("/")
     public ResponseEntity<List<AccountDTO>> getAllAccounts(){
         List<Account> accounts = (List<Account>) accountRepository.findAll();
-
-        return new ResponseEntity<>(accounts.stream().map(AccountDTO::new).collect(Collectors.toList()), HttpStatus.OK);
+        return new ResponseEntity<>(accounts
+                .stream()
+                .map(AccountDTO::new)
+                .collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

@@ -123,7 +123,7 @@ public class Card {
         StringBuilder numeroTarjeta = new StringBuilder(""); // Crea un StringBuilder para construir el número de tarjeta de crédito
 
         // Generar los primeros 12 dígitos de la tarjeta
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 4; i++) {
             int digito = random.nextInt(10); // Genera un dígito aleatorio entre 0 y 9
             numeroTarjeta.append(digito); // Agrega el dígito al StringBuilder
         }

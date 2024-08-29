@@ -10,32 +10,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 import static java.util.stream.Collectors.toList;
-@CrossOrigin(origins = "http://localhost:5173")
+
 @RestController
 @RequestMapping("/api/clients")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ClientController {
-    @Autowired   //cablear a la interfaz clientRepository,para poder usar los metodos de jpa repo. cableado automatico
-    private ClientRepository clientRepository; //se instancia client repository, interfaz, lo va a implementar hibernate. inyeccion de dependencias
+    @Autowired
+    private ClientRepository clientRepository;
 
     @Autowired
     private AccountRepository accountRepository;
 
-    @GetMapping("/hello")    //Esta anotación mapea la ruta "/hola" a la getClients() método. Significa que cuando recibimos una solicitud GET en la ruta "/hola" (la ruta completa sería http://localhost:8080/api/clients/hello), este método será invocado.
+    @GetMapping("/hello")
     public String getClients() { //mapping, asociado
         return "Hello clients!";
     }
 
-    @GetMapping("/")   //para mapear la ruta /api/clients/ a un método que devuelva todos los clientes de la base de datos.por defecto uso la ruta de arriba
+    @GetMapping("/")
     public List<ClientDTO> getAllClients() {
-        return clientRepository.findAll()//lista de todos los clientes en la base de datos
-                .stream() //para acceder a los metodos d orden sup
+        return clientRepository.findAll()
+                .stream()
                 .map(client -> new ClientDTO(client))
                 .collect(toList());
     }
 
-    //mappear la ruta a una solicitud de tipo GET
     @GetMapping("/{id}")
     public ResponseEntity<?> obtainClientById(@PathVariable Long id){
         Client client = clientRepository.findById(id).orElse(null);
@@ -49,8 +48,8 @@ public class ClientController {
 
     //crud crear cliente
     @PostMapping("/create")  //tipo post para crear un cliente
-    public Client createClient(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String email) {  //request param le dice a spring que solicito ese parametro
-        return clientRepository.save(new Client(firstName, lastName, email)); //validar q no sean string vacios, if first name.isBlank() return false
+    public Client createClient(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String email, @RequestParam String password) {
+        return clientRepository.save(new Client(firstName, lastName, email, password));
     }
 
     //crud para actualizar un cliente
@@ -64,7 +63,7 @@ public class ClientController {
         client.setLastName(lastName);
         client.setEmail(email);
 
-        Client updatedClient = clientRepository.save(client);  //sobreescribo el cliente que ya tenia
+        Client updatedClient = clientRepository.save(client);
         return new ResponseEntity<>(updatedClient, HttpStatus.OK);
     }
 

@@ -24,6 +24,10 @@ public class ClientLoan {
     public ClientLoan(double amount, int payments) {
         this.amount = amount;
         this.payments = payments;
+
+    }
+
+    public ClientLoan(String loanType, double amount, int payment) {
     }
 
     public Long getId() {
