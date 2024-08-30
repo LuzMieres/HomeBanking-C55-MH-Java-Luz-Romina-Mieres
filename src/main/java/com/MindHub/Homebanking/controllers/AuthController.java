@@ -3,10 +3,12 @@ package com.MindHub.Homebanking.controllers;
 import com.MindHub.Homebanking.dtos.ClientDTO;
 import com.MindHub.Homebanking.dtos.LoginDTO;
 import com.MindHub.Homebanking.dtos.RegisterDTO;
+import com.MindHub.Homebanking.models.Account;
 import com.MindHub.Homebanking.models.Client;
 import com.MindHub.Homebanking.repositories.AccountRepository;
 import com.MindHub.Homebanking.repositories.ClientRepository;
 import com.MindHub.Homebanking.servicesSecurity.JwtUtilService;
+import com.MindHub.Homebanking.utils.UtilMetod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +45,9 @@ public class AuthController {
     @Autowired
     private JwtUtilService jwtUtilService;
 
+    @Autowired
+    private UtilMetod utilMetod;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         try {
@@ -64,7 +70,7 @@ public class AuthController {
             return new ResponseEntity<>("First name field must not be empty", HttpStatus.FORBIDDEN);
         }
         if (registerDTO.lastName().isBlank()) {
-            return new ResponseEntity<>("Last lastname field must not be empty", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Last name field must not be empty", HttpStatus.FORBIDDEN);
         }
         if (registerDTO.email().isBlank()) {
             return new ResponseEntity<>("Email field must not be empty", HttpStatus.FORBIDDEN);
@@ -82,6 +88,15 @@ public class AuthController {
                 registerDTO.email(),
                 passwordEncoder.encode(registerDTO.password()));
         clientRepository.save(client);
+
+        // Generar el número de cuenta usando UtilMetod
+        String accountNumber = utilMetod.generateAccountNumber();
+        Account account = new Account();
+        account.setClient(client);
+        account.setNumber(utilMetod.generateAccountNumber());
+        account.setCreationDate(LocalDate.now());
+        accountRepository.save(account);
+
         return ResponseEntity.ok(client);
     }
 

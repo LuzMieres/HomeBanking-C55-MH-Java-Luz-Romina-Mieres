@@ -13,16 +13,21 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 public class WebConfig {
+
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
     @Autowired
     private CorsConfigurationSource corsConfigurationSource;
+
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -36,15 +41,19 @@ public class WebConfig {
 
                 .authorizeHttpRequests((authorize) ->
                         authorize
+                                .requestMatchers("/api/current", "/api/accounts/clients/current/accounts", "/api/cards/clients/current/cards").hasRole("CLIENT")
                                 .requestMatchers("/api/clients/", "/api/clients/**", "/api/accounts/", "/api/accounts/**","h2-console/**").hasRole("ADMIN")
-                                .requestMatchers("/api/current").hasRole("CLIENT")
                                 .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                                 .anyRequest().authenticated()
                 )
+                .exceptionHandling(exception ->
+                        exception.accessDeniedHandler(accessDeniedHandler)  // Agregar el AccessDeniedHandler personalizado
+                )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(
-                    SessionCreationPolicy.STATELESS)
+                        SessionCreationPolicy.STATELESS)
                 );
+
         return httpSecurity.build();
     }
 
@@ -58,4 +67,3 @@ public class WebConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
-
