@@ -118,24 +118,24 @@ public class Card {
                 '}';
     }
     // Método para generar un número de tarjeta de crédito completo
-    public  String generarNumeroTarjeta() {
+    public  String generateCardNumber() {
         Random random = new Random(); // Crea una instancia de Random para generar números aleatorios
-        StringBuilder numeroTarjeta = new StringBuilder(""); // Crea un StringBuilder para construir el número de tarjeta de crédito
+        StringBuilder cardNumber = new StringBuilder(""); // Crea un StringBuilder para construir el número de tarjeta de crédito
 
         // Generar los primeros 12 dígitos de la tarjeta
         for (int i = 0; i < 4; i++) {
             int digito = random.nextInt(10); // Genera un dígito aleatorio entre 0 y 9
-            numeroTarjeta.append(digito); // Agrega el dígito al StringBuilder
+            cardNumber.append(digito); // Agrega el dígito al StringBuilder
         }
 
 //        // Generar el siguiente dígito de la tarjeta (el dígito de verificación)
 //        int digitoVerificacion = calcularDigitoVerificacion(numeroTarjeta.toString()); // Calcula el dígito de verificación utilizando el método calcularDigitoVerificacion
 //        numeroTarjeta.append(digitoVerificacion); // Agrega el dígito de verificación al StringBuilder
-        return numeroTarjeta.toString(); // Devuelve el número de tarjeta de crédito generado como una cadena de texto
+        return cardNumber.toString(); // Devuelve el número de tarjeta de crédito generado como una cadena de texto
     }
 
     // Método para generar un CVV aleatorio
-    public String generarCVV() {
+    public String generateCVV() {
         Random random = new Random();
         int cvv = random.nextInt(1000);
 

@@ -1,7 +1,6 @@
 package com.MindHub.Homebanking.models;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -9,25 +8,34 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Enumerated(EnumType.STRING)
     private TransactionType type;
+
     private double amount;
+
     private String description;
+
     private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="account_owner_id")
     private Account account;
 
+    // Constructor por defecto
     public Transaction() {
     }
 
-    public Transaction(TransactionType type, double amount, String description, LocalDateTime date) {
+    // Constructor con todos los campos necesarios
+    public Transaction(TransactionType type, double amount, String description, LocalDateTime date, Account account) {
         this.type = type;
         this.amount = amount;
         this.description = description;
         this.date = date;
+        this.account = account;
     }
+
+    // Getters y setters
 
     public Long getId() {
         return id;
@@ -61,16 +69,16 @@ public class Transaction {
         return date;
     }
 
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
     public Account getAccount() {
         return account;
     }
 
     public void setAccount(Account account) {
         this.account = account;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
     }
 
     @Override
