@@ -165,7 +165,7 @@ public class HomebankingApplication {
 			cardRepository.save(creditCardGold);
 
 			// Client Luz
-			Client luz = new Client("Luz", "Mieres", "luzmieres@gmail.com", passwordEncoder.encode("123"));
+			Client luz = new Client("Luz", "Mieres", "luzmieres@admin.com", passwordEncoder.encode("123"));
 			clientRepository.save(luz);
 
 			// Accounts for Client Luz

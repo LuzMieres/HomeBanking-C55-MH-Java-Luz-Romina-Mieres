@@ -2,6 +2,7 @@ package com.MindHub.Homebanking.servicesSecurity;
 
 import com.MindHub.Homebanking.models.Client;
 import com.MindHub.Homebanking.repositories.ClientRepository;
+import com.MindHub.Homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,11 +14,11 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Client client = clientRepository.findByEmail(username);
+        Client client = clientService.findByEmail(username);
         if (client == null){
             throw new UsernameNotFoundException(username);
         }
