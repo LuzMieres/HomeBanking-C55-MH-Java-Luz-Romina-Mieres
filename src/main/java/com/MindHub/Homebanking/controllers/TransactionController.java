@@ -2,7 +2,6 @@ package com.MindHub.Homebanking.controllers;
 
 import com.MindHub.Homebanking.dtos.TransferDTO;
 import com.MindHub.Homebanking.models.Client;
-import com.MindHub.Homebanking.repositories.ClientRepository;
 import com.MindHub.Homebanking.services.ClientService;
 import com.MindHub.Homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;

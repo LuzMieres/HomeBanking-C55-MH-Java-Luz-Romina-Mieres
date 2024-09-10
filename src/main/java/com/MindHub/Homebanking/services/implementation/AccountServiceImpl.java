@@ -5,8 +5,10 @@ import com.MindHub.Homebanking.models.Account;
 import com.MindHub.Homebanking.models.Client;
 import com.MindHub.Homebanking.repositories.AccountRepository;
 import com.MindHub.Homebanking.services.AccountService;
+import com.MindHub.Homebanking.services.ClientService;
 import com.MindHub.Homebanking.utils.UtilMetod;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,19 +24,26 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private UtilMetod utilMetod;
 
+    @Autowired
+    private ClientService clientService;
+
     @Override
     public AccountDTO createAccountForCurrentClient(Client client) {
-        if (accountRepository.findByClient(client).size() >= 3) {
-            throw new IllegalArgumentException("You can't have more than 3 accounts");
-        }
+        validateMaxAccounts(client);
 
         Account account = new Account();
-        account.setClient(client);
+        client.addAccount(account);
         account.setNumber(utilMetod.generateAccountNumber());
         account.setCreationDate(LocalDate.now());
         accountRepository.save(account);
 
         return new AccountDTO(account);
+    }
+
+    private void validateMaxAccounts(Client client) {
+        if (accountRepository.findByClient(client).size() >= 3) {
+            throw new IllegalArgumentException("You can't have more than 3 accounts");
+        }
     }
 
     @Override
@@ -49,5 +58,26 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findById(id)
                 .map(AccountDTO::new)
                 .orElseThrow(() -> new IllegalArgumentException("The account does not exist"));
+    }
+
+    @Override
+    public Client getAuthenticatedClient(Authentication authentication) {
+        Client client = clientService.findByEmail(authentication.getName());
+        validateExistClient(client);
+        return client;
+    }
+
+    private void validateExistClient(Client client) {
+        if (client == null) {
+            throw new IllegalArgumentException("The client does not exist");
+        }
+    }
+
+    @Override
+    public List<AccountDTO> getClientAccounts(Client client) {
+        return client.getAccounts()
+                .stream()
+                .map(AccountDTO::new)
+                .collect(Collectors.toList());
     }
 }

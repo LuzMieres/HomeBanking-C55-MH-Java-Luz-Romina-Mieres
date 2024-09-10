@@ -1,6 +1,7 @@
 package com.MindHub.Homebanking.services.implementation;
 
 import com.MindHub.Homebanking.dtos.LoanDTO;
+import com.MindHub.Homebanking.exceptions.ClientNotFoundException;
 import com.MindHub.Homebanking.models.*;
 import com.MindHub.Homebanking.repositories.AccountRepository;
 import com.MindHub.Homebanking.repositories.ClientLoanRepository;
@@ -55,54 +56,78 @@ public class LoanServiceImpl implements LoanService {
     @Transactional
     public void applyForLoan(String loanName, double amount, int payments, String destinationAccountNumber, Client client) {
         // Buscar el préstamo por nombre
+        Loan loan = findLoanByName(loanName);
+
+        validateClient(client);
+
+        // Validaciones
+        validateLoanApplication(loan, amount, payments, destinationAccountNumber);
+
+        // Verificar la cuenta de destino
+        Account destinationAccount = verifyDestinationAccount(destinationAccountNumber, client);
+
+        // Calcular el monto total del préstamo con la tasa de interés
+        double totalAmount = calculateTotalAmount(amount, payments);
+
+        // Aplicar el préstamo al cliente
+        applyLoanToClient(loan, amount, payments, destinationAccount, totalAmount, client);
+    }
+
+    private Loan findLoanByName(String loanName) {
         Loan loan = loanRepository.findByName(loanName);
         if (loan == null) {
             throw new IllegalArgumentException("Loan not found with name: " + loanName);
         }
-        // Validaciones básicas
+        return loan;
+    }
+
+    private void validateLoanApplication(Loan loan, double amount, int payments, String destinationAccountNumber) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Please enter a valid amount.");
         }
         if (payments <= 0) {
-            throw new IllegalArgumentException("Please enter a valid payments.");
+            throw new IllegalArgumentException("Please enter valid payments.");
         }
-        if(destinationAccountNumber.isEmpty()){
+        if (destinationAccountNumber.isEmpty()) {
             throw new IllegalArgumentException("Please select a loan destination account.");
         }
-        // Verificar que el monto no exceda el máximo permitido
         if (amount > loan.getMaxAmount()) {
-            throw new IllegalArgumentException("Amount exceeds the maximum allowed for this loan");
+            throw new IllegalArgumentException("Amount exceeds the maximum allowed for this loan.");
         }
-
-        // Verificar que el número de cuotas esté entre las disponibles
         if (!loan.getPayments().contains(payments)) {
-            throw new IllegalArgumentException("Invalid number of payments for this loan");
+            throw new IllegalArgumentException("Invalid number of payments for this loan.");
         }
+    }
 
-        // Verificar que la cuenta de destino exista
+    private Account verifyDestinationAccount(String destinationAccountNumber, Client client) {
         Account destinationAccount = accountRepository.findByNumber(destinationAccountNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Destination account not found"));
 
-        // Verificar que la cuenta de destino pertenezca al cliente autenticado
         if (!destinationAccount.getClient().equals(client)) {
-            throw new IllegalArgumentException("Destination account does not belong to the authenticated client");
+            throw new IllegalArgumentException("Destination account does not belong to the authenticated client.");
         }
+        return destinationAccount;
+    }
 
-        // Calcular la tasa de interés dependiendo de las cuotas
-        double interestRate;
+    private double calculateTotalAmount(double amount, int payments) {
+        double interestRate = getInterestRate(payments);
+        return amount * interestRate;
+    }
+
+    private double getInterestRate(int payments) {
         if (payments == 12) {
-            interestRate = 1.20;  // 20%
+            return 1.20;  // 20%
         } else if (payments > 12) {
-            interestRate = 1.25;  // 25%
+            return 1.25;  // 25%
         } else {
-            interestRate = 1.15;  // 15%
+            return 1.15;  // 15%
         }
+    }
 
-        // Calcular el monto total del préstamo con la tasa de interés
-        double totalAmount = amount * interestRate;
-
+    private void applyLoanToClient(Loan loan, double amount, int payments, Account destinationAccount, double totalAmount, Client client) {
         // Crear la transacción de crédito
-        Transaction creditTransaction = new Transaction(TransactionType.CREDIT, totalAmount,  "Approved " + loan.getName() + " loan.", LocalDateTime.now(), destinationAccount);
+        Transaction creditTransaction = new Transaction(TransactionType.CREDIT, totalAmount,
+                "Approved " + loan.getName() + " loan.", LocalDateTime.now(), destinationAccount);
         transactionRepository.save(creditTransaction);
 
         // Actualizar el balance de la cuenta de destino
@@ -113,6 +138,12 @@ public class LoanServiceImpl implements LoanService {
         ClientLoan clientLoan = new ClientLoan(amount, payments, client, loan);
         client.addClientLoan(clientLoan);
         clientLoanRepository.save(clientLoan);
+    }
+
+    private void validateClient(Client client) {
+        if (client == null) {
+            throw new ClientNotFoundException("Client not found");
+        }
     }
 
 }

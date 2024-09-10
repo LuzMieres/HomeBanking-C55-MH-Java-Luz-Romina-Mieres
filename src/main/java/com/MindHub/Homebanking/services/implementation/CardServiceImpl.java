@@ -33,10 +33,7 @@ public class CardServiceImpl implements CardService {
         ColorType cardColor = ColorType.valueOf(color.toUpperCase());
 
         // Verificar si ya existe una tarjeta de este tipo y color
-        List<Card> clientCards = cardRepository.findByClientAndColorAndType(client, cardColor, cardType);
-        if (!clientCards.isEmpty()) {
-            throw new IllegalArgumentException("You already have a card of this type and color");
-        }
+        checkIfCardAlreadyExists(client, cardColor, cardType);
 
         Card card = new Card();
         card.setClient(client);
@@ -50,6 +47,20 @@ public class CardServiceImpl implements CardService {
         cardRepository.save(card);
 
         return new CardDTO(card);
+    }
+
+    @Override
+    public void validateCardDetails(String type, String color) {
+        if (type == null || color == null) {
+            throw new IllegalArgumentException("Type and color must be specified");
+        }
+    }
+
+    private void checkIfCardAlreadyExists(Client client, ColorType cardColor, CardType cardType) {
+        List<Card> clientCards = cardRepository.findByClientAndColorAndType(client, cardColor, cardType);
+        if (!clientCards.isEmpty()) {
+            throw new IllegalArgumentException("You already have a card of this type and color");
+        }
     }
 }
 

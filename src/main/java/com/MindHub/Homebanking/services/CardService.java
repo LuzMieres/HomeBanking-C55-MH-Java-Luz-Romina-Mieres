@@ -5,5 +5,6 @@ import com.MindHub.Homebanking.models.Client;
 
 public interface CardService {
     CardDTO createCardForCurrentClient(Client client, String type, String color);
+    void validateCardDetails(String type, String color);
 }
 

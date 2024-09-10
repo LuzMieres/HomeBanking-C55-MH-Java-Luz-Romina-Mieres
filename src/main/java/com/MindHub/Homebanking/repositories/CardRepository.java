@@ -12,6 +12,4 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
     List<Card> findByClientAndColorAndType(Client client, ColorType color, CardType type);
-
-    long countByClientAndColorAndType(Client client, ColorType color, CardType type);
 }

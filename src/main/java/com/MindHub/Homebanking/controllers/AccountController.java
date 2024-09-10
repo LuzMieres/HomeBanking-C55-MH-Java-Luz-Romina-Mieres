@@ -23,10 +23,16 @@ public class AccountController {
     @Autowired
     private ClientService clientService;
 
+    @GetMapping("/clients/current")
+    public ResponseEntity<?> getClientAccounts(Authentication authentication) {
+       Client client = accountService.getAuthenticatedClient(authentication);
+       List<AccountDTO> accounts = accountService.getClientAccounts(client);
+       return new ResponseEntity<>(accounts, HttpStatus.OK);
+    }
+
     @PostMapping("/clients/current/accounts")
     public ResponseEntity<?> createAccountForCurrentClient(Authentication authentication) {
-        Client client = clientService.findByEmail(authentication.getName());
-
+        Client client = accountService.getAuthenticatedClient(authentication);
         try {
             AccountDTO accountDTO = accountService.createAccountForCurrentClient(client);
             return new ResponseEntity<>(accountDTO, HttpStatus.CREATED);
