@@ -11,6 +11,7 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(unique = true)
     private String number;
     private LocalDate creationDate;
     private double balance;

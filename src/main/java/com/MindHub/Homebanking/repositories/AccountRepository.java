@@ -20,5 +20,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByClient(Client client);
 
     // Nuevo método para buscar una cuenta por su número
-    Optional<Account> findByNumber(String number);
+
+    List<Account> findByNumber(String number);  // Cambia a List en lugar de Optional o Account
+
+
 }

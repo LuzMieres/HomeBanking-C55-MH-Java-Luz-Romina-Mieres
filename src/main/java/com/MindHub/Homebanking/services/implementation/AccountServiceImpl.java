@@ -63,8 +63,15 @@ public class AccountServiceImpl implements AccountService {
     // Método para obtener la cuenta por número
     @Override
     public Account getAccountByNumber(String accountNumber) {
-        return accountRepository.findByNumber(accountNumber)
-                .orElseThrow(() -> new IllegalArgumentException("The account does not exist"));
+        List<Account> accounts = accountRepository.findByNumber(accountNumber);
+
+        if (accounts.isEmpty()) {
+            throw new IllegalArgumentException("The account does not exist");
+        } else if (accounts.size() > 1) {
+            throw new IllegalArgumentException("Multiple accounts found with the same account number");
+        }
+
+        return accounts.get(0);  // Devuelve la única cuenta encontrada
     }
 
     @Override

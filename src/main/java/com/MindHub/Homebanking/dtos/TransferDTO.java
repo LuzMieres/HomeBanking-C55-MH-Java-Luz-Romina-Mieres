@@ -21,4 +21,14 @@ public class TransferDTO {
     public String getDestinationAccountNumber() {
         return destinationAccountNumber;
     }
+
+    public void setAmount(int i) {
+    }
+
+    public void setOriginAccountNumber(String vin005) {
+    }
+
+    public void setDestinationAccountNumber(String vin006) {
+
+    }
 }

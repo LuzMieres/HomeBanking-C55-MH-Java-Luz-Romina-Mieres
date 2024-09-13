@@ -43,11 +43,12 @@ public class CardServiceImpl implements CardService {
         card.setCvv(utilMetod.generateCvv());
         card.setFromDate(LocalDate.now());
         card.setThruDate(utilMetod.getThruDate());
-        card.setCardHolder(client.getFirstName() + " " + client.getLastName());
+        card.setCardHolder((client.getFirstName() + " " + client.getLastName()).toUpperCase());  // Convertir a mayúsculas
         cardRepository.save(card);
 
         return new CardDTO(card);
     }
+
 
     @Override
     public void validateCardDetails(String type, String color) {

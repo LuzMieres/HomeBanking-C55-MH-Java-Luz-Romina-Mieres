@@ -8,6 +8,7 @@ import com.MindHub.Homebanking.repositories.ClientLoanRepository;
 import com.MindHub.Homebanking.repositories.LoanRepository;
 import com.MindHub.Homebanking.repositories.TransactionRepository;
 import com.MindHub.Homebanking.services.LoanService;
+import jakarta.persistence.NonUniqueResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,14 +99,25 @@ public class LoanServiceImpl implements LoanService {
     }
 
     private Account verifyDestinationAccount(String destinationAccountNumber, Client client) {
-        Account destinationAccount = accountRepository.findByNumber(destinationAccountNumber)
-                .orElseThrow(() -> new IllegalArgumentException("Destination account not found"));
+        List<Account> destinationAccounts = accountRepository.findByNumber(destinationAccountNumber);
+
+        if (destinationAccounts.isEmpty()) {
+            throw new IllegalArgumentException("The account does not exist");
+        } else if (destinationAccounts.size() > 1) {
+            throw new IllegalArgumentException("Multiple accounts found with the same account number. Please contact support.");
+        }
+
+        Account destinationAccount = destinationAccounts.get(0);
 
         if (!destinationAccount.getClient().equals(client)) {
             throw new IllegalArgumentException("Destination account does not belong to the authenticated client.");
         }
+
         return destinationAccount;
     }
+
+
+
 
     private double calculateTotalAmount(double amount, int payments) {
         double interestRate = getInterestRate(payments);
