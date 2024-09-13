@@ -58,8 +58,6 @@ public class LoanServiceImpl implements LoanService {
         // Buscar el préstamo por nombre
         Loan loan = findLoanByName(loanName);
 
-        validateClient(client);
-
         // Validaciones
         validateLoanApplication(loan, amount, payments, destinationAccountNumber);
 
@@ -131,19 +129,15 @@ public class LoanServiceImpl implements LoanService {
         transactionRepository.save(creditTransaction);
 
         // Actualizar el balance de la cuenta de destino
-        destinationAccount.setBalance(destinationAccount.getBalance() + totalAmount);
+        destinationAccount.setBalance(destinationAccount.getBalance() + amount);
         accountRepository.save(destinationAccount);
 
         // Crear y guardar la relación entre el cliente y el préstamo (ClientLoan)
-        ClientLoan clientLoan = new ClientLoan(amount, payments, client, loan);
+        ClientLoan clientLoan = new ClientLoan(totalAmount, payments, client, loan);
+        clientLoan.setAmount(totalAmount);
         client.addClientLoan(clientLoan);
+        loan.addClientLoan(clientLoan);
         clientLoanRepository.save(clientLoan);
-    }
-
-    private void validateClient(Client client) {
-        if (client == null) {
-            throw new ClientNotFoundException("Client not found");
-        }
     }
 
 }

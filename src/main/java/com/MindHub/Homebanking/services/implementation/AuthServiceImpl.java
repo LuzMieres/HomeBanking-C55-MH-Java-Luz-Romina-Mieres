@@ -58,18 +58,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Client register(RegisterDTO registerDTO) {
-        if (clientService.findByEmail(registerDTO.email()) != null) {
+        // Verificar si el cliente ya existe
+        Client existingClient = clientService.findByEmail(registerDTO.email());
+        if (existingClient != null) {
             throw new IllegalArgumentException("Email already in use");
         }
 
+        // Crear nuevo cliente
         Client client = new Client(
                 registerDTO.firstName(),
                 registerDTO.lastName(),
                 registerDTO.email(),
                 passwordEncoder.encode(registerDTO.password()));
+
         clientRepository.save(client);
 
-        // Generar el número de cuenta
+        // Generar la cuenta para el nuevo cliente
         Account account = new Account();
         account.setClient(client);
         account.setNumber(utilMetod.generateAccountNumber());
@@ -82,6 +86,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ClientDTO getCurrentClient(String email) {
         Client client = clientService.findByEmail(email);
+        if (client == null) {
+            throw new IllegalArgumentException("Client with email " + email + " not found");
+        }
         return new ClientDTO(client);
     }
 }

@@ -45,16 +45,25 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO) {
         try {
+            // Intentar registrar al cliente
             Client client = authService.register(registerDTO);
             return ResponseEntity.ok(client);
         } catch (IllegalArgumentException e) {
+            // Si el email ya existe, devolver error 403
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+        } catch (Exception e) {
+            // Manejo de cualquier otro error inesperado
+            return new ResponseEntity<>("An error occurred during registration", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/current")
     public ResponseEntity<?> getClient(Authentication authentication) {
-        ClientDTO clientDTO = authService.getCurrentClient(authentication.getName());
-        return ResponseEntity.ok(clientDTO);
+        try {
+            ClientDTO clientDTO = authService.getCurrentClient(authentication.getName());
+            return ResponseEntity.ok(clientDTO);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 }

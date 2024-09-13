@@ -38,8 +38,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client findByEmail(String email) {
-        return clientRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Client with email " + email + " not found"));
+        return clientRepository.findByEmail(email).orElse(null);  // Retorna null si no lo encuentra
     }
 
 }

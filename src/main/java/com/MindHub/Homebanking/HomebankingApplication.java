@@ -1,10 +1,14 @@
 package com.MindHub.Homebanking;
 
+import com.MindHub.Homebanking.models.*;
 import com.MindHub.Homebanking.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 
 @SpringBootApplication
@@ -45,7 +49,7 @@ public class HomebankingApplication {
 //			transactionRepository.save(receivedTransfer2Melba);
 //			transactionRepository.save(paymentForInternetMelba);
 //
-//			// Loans
+			// Loans
 //			Loan mortgage = new Loan("Mortgage", 500000, Arrays.asList(12, 24, 36, 48, 60, 72));
 //			Loan personal = new Loan("Personal", 100000, Arrays.asList(6, 12, 24));
 //			Loan automotive = new Loan("Automotive", 300000, Arrays.asList(6, 12, 24, 36));

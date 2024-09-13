@@ -7,6 +7,7 @@ import com.MindHub.Homebanking.models.Transaction;
 import com.MindHub.Homebanking.models.TransactionType;
 import com.MindHub.Homebanking.repositories.AccountRepository;
 import com.MindHub.Homebanking.repositories.TransactionRepository;
+import com.MindHub.Homebanking.services.AccountService;
 import com.MindHub.Homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private AccountService accountService;
+
     @Override
     @Transactional
     public void createTransaction(TransferDTO transferDTO, Client client) {
@@ -31,8 +35,8 @@ public class TransactionServiceImpl implements TransactionService {
         String destinationAccountNumber = transferDTO.getDestinationAccountNumber();
 
         // Obtener cuentas
-        Account originAccount = getAccountByNumber(originAccountNumber, "Origin account does not exist");
-        Account destinationAccount = getAccountByNumber(destinationAccountNumber, "Destination account does not exist");
+        Account originAccount = accountService.getAccountByNumber(originAccountNumber);
+        Account destinationAccount = accountService.getAccountByNumber(destinationAccountNumber);
 
         // Validaciones
         validateClientAccountOwnership(originAccount, client);
@@ -40,12 +44,6 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Crear y guardar las transacciones
         processTransaction(amount, originAccountNumber, destinationAccountNumber, originAccount, destinationAccount);
-    }
-
-    // Método para obtener la cuenta por número
-    private Account getAccountByNumber(String accountNumber, String errorMessage) {
-        return accountRepository.findByNumber(accountNumber)
-                .orElseThrow(() -> new IllegalArgumentException(errorMessage));
     }
 
     // Método para validar que la cuenta de origen pertenezca al cliente autenticado

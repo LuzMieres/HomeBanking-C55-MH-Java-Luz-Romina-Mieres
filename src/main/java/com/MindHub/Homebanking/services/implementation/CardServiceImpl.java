@@ -36,7 +36,7 @@ public class CardServiceImpl implements CardService {
         checkIfCardAlreadyExists(client, cardColor, cardType);
 
         Card card = new Card();
-        card.setClient(client);
+        client.addCard(card);
         card.setType(cardType);
         card.setColor(cardColor);
         card.setNumber(utilMetod.generateCardNumber());
@@ -51,10 +51,11 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void validateCardDetails(String type, String color) {
-        if (type == null || color == null) {
+        if (type == null || color == null || type.isBlank() || color.isBlank()) {
             throw new IllegalArgumentException("Type and color must be specified");
         }
     }
+
 
     private void checkIfCardAlreadyExists(Client client, ColorType cardColor, CardType cardType) {
         List<Card> clientCards = cardRepository.findByClientAndColorAndType(client, cardColor, cardType);

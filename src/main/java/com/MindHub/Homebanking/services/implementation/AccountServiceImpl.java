@@ -60,6 +60,13 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new IllegalArgumentException("The account does not exist"));
     }
 
+    // Método para obtener la cuenta por número
+    @Override
+    public Account getAccountByNumber(String accountNumber) {
+        return accountRepository.findByNumber(accountNumber)
+                .orElseThrow(() -> new IllegalArgumentException("The account does not exist"));
+    }
+
     @Override
     public Client getAuthenticatedClient(Authentication authentication) {
         Client client = clientService.findByEmail(authentication.getName());
