@@ -22,13 +22,16 @@ public class TransferDTO {
         return destinationAccountNumber;
     }
 
-    public void setAmount(int i) {
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
-    public void setOriginAccountNumber(String vin005) {
+    public void setOriginAccountNumber(String originAccountNumber) {
+        this.originAccountNumber = originAccountNumber;
     }
 
-    public void setDestinationAccountNumber(String vin006) {
-
+    public void setDestinationAccountNumber(String destinationAccountNumber) {
+        this.destinationAccountNumber = destinationAccountNumber;
     }
+
 }

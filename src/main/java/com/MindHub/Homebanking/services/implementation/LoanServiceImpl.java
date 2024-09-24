@@ -1,14 +1,9 @@
 package com.MindHub.Homebanking.services.implementation;
 
 import com.MindHub.Homebanking.dtos.LoanDTO;
-import com.MindHub.Homebanking.exceptions.ClientNotFoundException;
 import com.MindHub.Homebanking.models.*;
-import com.MindHub.Homebanking.repositories.AccountRepository;
-import com.MindHub.Homebanking.repositories.ClientLoanRepository;
-import com.MindHub.Homebanking.repositories.LoanRepository;
-import com.MindHub.Homebanking.repositories.TransactionRepository;
+import com.MindHub.Homebanking.repositories.*;
 import com.MindHub.Homebanking.services.LoanService;
-import jakarta.persistence.NonUniqueResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +26,9 @@ public class LoanServiceImpl implements LoanService {
 
     @Autowired
     private ClientLoanRepository clientLoanRepository;
+
+    @Autowired
+    private ClientRepository clientRepository;
 
     @Override
     public List<Loan> getAllLoans() {
@@ -72,14 +70,20 @@ public class LoanServiceImpl implements LoanService {
         applyLoanToClient(loan, amount, payments, destinationAccount, totalAmount, client);
     }
 
+    // Método para buscar un préstamo por nombre
     private Loan findLoanByName(String loanName) {
-        Loan loan = loanRepository.findByName(loanName);
-        if (loan == null) {
-            throw new IllegalArgumentException("Loan not found with name: " + loanName);
+        List<Loan> loans = loanRepository.findByName(loanName);
+
+        if (loans.isEmpty()) {
+            throw new IllegalArgumentException("No loan found with name: " + loanName);
+        } else if (loans.size() > 1) {
+            return loans.get(0); // Retorna el primer préstamo encontrado
+        } else {
+            return loans.get(0); // Si solo hay un resultado, retorna ese
         }
-        return loan;
     }
 
+    // Validaciones de la aplicación del préstamo
     private void validateLoanApplication(Loan loan, double amount, int payments, String destinationAccountNumber) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Please enter a valid amount.");
@@ -98,6 +102,7 @@ public class LoanServiceImpl implements LoanService {
         }
     }
 
+    // Verificar la cuenta de destino y su propiedad
     private Account verifyDestinationAccount(String destinationAccountNumber, Client client) {
         List<Account> destinationAccounts = accountRepository.findByNumber(destinationAccountNumber);
 
@@ -116,14 +121,13 @@ public class LoanServiceImpl implements LoanService {
         return destinationAccount;
     }
 
-
-
-
+    // Calcular el monto total con la tasa de interés
     private double calculateTotalAmount(double amount, int payments) {
         double interestRate = getInterestRate(payments);
         return amount * interestRate;
     }
 
+    // Obtener la tasa de interés según los pagos
     private double getInterestRate(int payments) {
         if (payments == 12) {
             return 1.20;  // 20%
@@ -134,9 +138,11 @@ public class LoanServiceImpl implements LoanService {
         }
     }
 
+
+    // Método que aplica el préstamo al cliente
     private void applyLoanToClient(Loan loan, double amount, int payments, Account destinationAccount, double totalAmount, Client client) {
         // Crear la transacción de crédito
-        Transaction creditTransaction = new Transaction(TransactionType.CREDIT, totalAmount,
+        Transaction creditTransaction = new Transaction(TransactionType.CREDIT, amount,
                 "Approved " + loan.getName() + " loan.", LocalDateTime.now(), destinationAccount);
         transactionRepository.save(creditTransaction);
 
@@ -145,11 +151,14 @@ public class LoanServiceImpl implements LoanService {
         accountRepository.save(destinationAccount);
 
         // Crear y guardar la relación entre el cliente y el préstamo (ClientLoan)
-        ClientLoan clientLoan = new ClientLoan(totalAmount, payments, client, loan);
-        clientLoan.setAmount(totalAmount);
+        ClientLoan clientLoan = new ClientLoan(amount, payments, client, loan);
+        clientLoanRepository.save(clientLoan);  // Guardar el ClientLoan
+
+        // Asegurar que el Client y el Loan tengan referencias bidireccionales actualizadas
         client.addClientLoan(clientLoan);
-        loan.addClientLoan(clientLoan);
+        loan.getClientLoans().add(clientLoan);
         clientLoanRepository.save(clientLoan);
     }
+
 
 }

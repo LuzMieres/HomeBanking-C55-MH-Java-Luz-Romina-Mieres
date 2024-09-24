@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Component
 public class UtilMetod {
     @Autowired
-    private AccountRepository accountRepository;
+    public AccountRepository accountRepository;
     private static final SecureRandom random = new SecureRandom();
 
     public String generateAccountNumber() {

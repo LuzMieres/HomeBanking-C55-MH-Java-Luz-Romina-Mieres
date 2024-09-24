@@ -23,7 +23,12 @@ public class Transaction {
     private Account account;
 
     // Constructor por defecto
+
+
     public Transaction() {
+    }
+
+    public Transaction(TransactionType debit, double v, LocalDateTime now, Account originAccount) {
     }
 
     // Constructor con todos los campos necesarios

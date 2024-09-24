@@ -64,6 +64,14 @@ public class Loan {
         this.payments = payments;
     }
 
+    public List<ClientLoan> getClientLoans() {
+        return clientLoans;
+    }
+
+    public void setClientLoans(List<ClientLoan> clientLoans) {
+        this.clientLoans = clientLoans;
+    }
+
     @Override
     public String toString() {
         return "Loan{" +

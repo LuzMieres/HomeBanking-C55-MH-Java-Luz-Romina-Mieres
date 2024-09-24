@@ -27,58 +27,67 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private AccountService accountService;
 
-    @Override
     @Transactional
     public void createTransaction(TransferDTO transferDTO, Client client) {
-        double amount = transferDTO.getAmount();
-        String originAccountNumber = transferDTO.getOriginAccountNumber();
-        String destinationAccountNumber = transferDTO.getDestinationAccountNumber();
+        // Imprimir los datos recibidos para debugging
+        System.out.println("Amount: " + transferDTO.getAmount());
+        System.out.println("Origin Account: " + transferDTO.getOriginAccountNumber());
+        System.out.println("Destination Account: " + transferDTO.getDestinationAccountNumber());
 
-        // Obtener cuentas
-        Account originAccount = accountService.getAccountByNumber(originAccountNumber);
-        Account destinationAccount = accountService.getAccountByNumber(destinationAccountNumber);
+        // Verificar que el monto sea mayor a cero
+        if (transferDTO.getAmount() <= 0) {
+            throw new IllegalArgumentException("The transaction amount must be greater than zero");
+        }
 
-        // Validaciones
-        validateClientAccountOwnership(originAccount, client);
-        validateSufficientBalance(originAccount, amount);
+        // Obtener la cuenta origen y verificar que exista
+        Account originAccount = accountService.getAccountByNumber(transferDTO.getOriginAccountNumber());
+        if (originAccount == null) {
+            throw new IllegalArgumentException("Origin account does not exist");
+        }
 
-        // Crear y guardar las transacciones
-        processTransaction(amount, originAccountNumber, destinationAccountNumber, originAccount, destinationAccount);
-    }
-
-    // Método para validar que la cuenta de origen pertenezca al cliente autenticado
-    private void validateClientAccountOwnership(Account originAccount, Client client) {
+        // Verificar que la cuenta de origen pertenece al cliente autenticado
         if (!originAccount.getClient().equals(client)) {
             throw new IllegalArgumentException("Origin account does not belong to the authenticated client");
         }
-    }
 
-    // Método para validar que la cuenta tenga saldo suficiente
-    private void validateSufficientBalance(Account originAccount, double amount) {
-        if (originAccount.getBalance() < amount) {
+        // Verificar que la cuenta de origen tenga suficiente saldo
+        if (originAccount.getBalance() < transferDTO.getAmount()) {
             throw new IllegalArgumentException("Insufficient balance");
         }
+
+        // Verificar que la cuenta de origen y destino no sean la misma
+        if (originAccount.getNumber().equals(transferDTO.getDestinationAccountNumber())) {
+            throw new IllegalArgumentException("Origin and destination accounts cannot be the same");
+        }
+
+        // Obtener la cuenta destino y verificar que exista
+        Account destinationAccount = accountService.getAccountByNumber(transferDTO.getDestinationAccountNumber());
+        if (destinationAccount == null) {
+            throw new IllegalArgumentException("Destination account does not exist");
+        }
+
+        // Procesar la transacción
+        processTransaction(transferDTO.getAmount(), transferDTO.getOriginAccountNumber(), transferDTO.getDestinationAccountNumber(), originAccount, destinationAccount);
     }
 
-    // Método para procesar la transacción
-    private void processTransaction(double amount, String originAccountNumber, String destinationAccountNumber, Account originAccount, Account destinationAccount) {
-        Transaction debitTransaction = createTransaction(TransactionType.DEBIT, -amount, "Transfer to " + destinationAccountNumber, originAccount);
-        Transaction creditTransaction = createTransaction(TransactionType.CREDIT, amount, "Transfer from " + originAccountNumber, destinationAccount);
 
-        // Guardar transacciones
+    private void processTransaction(double amount, String originAccountNumber, String destinationAccountNumber, Account originAccount, Account destinationAccount) {
+        // Crear la transacción de débito para la cuenta de origen
+        Transaction debitTransaction = createTransaction(TransactionType.DEBIT, -amount, "Transfer to " + destinationAccountNumber, originAccount);
         transactionRepository.save(debitTransaction);
+
+        // Crear la transacción de crédito para la cuenta de destino
+        Transaction creditTransaction = createTransaction(TransactionType.CREDIT, amount, "Transfer from " + originAccountNumber, destinationAccount);
         transactionRepository.save(creditTransaction);
 
-        // Actualizar balances
+        // Actualizar los balances de las cuentas
         updateAccountBalances(originAccount, destinationAccount, amount);
     }
 
-    // Método para crear una transacción
     private Transaction createTransaction(TransactionType type, double amount, String description, Account account) {
         return new Transaction(type, amount, description, LocalDateTime.now(), account);
     }
 
-    // Método para actualizar los balances de las cuentas
     private void updateAccountBalances(Account originAccount, Account destinationAccount, double amount) {
         originAccount.setBalance(originAccount.getBalance() - amount);
         destinationAccount.setBalance(destinationAccount.getBalance() + amount);
@@ -86,5 +95,6 @@ public class TransactionServiceImpl implements TransactionService {
         accountRepository.save(originAccount);
         accountRepository.save(destinationAccount);
     }
+
 }
 

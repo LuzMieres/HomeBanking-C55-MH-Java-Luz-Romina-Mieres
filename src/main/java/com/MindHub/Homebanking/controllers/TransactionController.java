@@ -22,6 +22,11 @@ public class TransactionController {
 
     @PostMapping("/")
     public ResponseEntity<?> createTransaction(@RequestBody TransferDTO transferDTO, Authentication authentication) {
+        // Imprimir los datos recibidos para debugging
+        System.out.println("Amount: " + transferDTO.getAmount());
+        System.out.println("Origin Account Number: " + transferDTO.getOriginAccountNumber());
+        System.out.println("Destination Account Number: " + transferDTO.getDestinationAccountNumber());
+
         Client client = clientService.findByEmail(authentication.getName());
 
         try {
@@ -31,5 +36,6 @@ public class TransactionController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
+
 }
 

@@ -47,17 +47,15 @@ public class AccountServiceTest {
         Client client = clientService.findByEmail("testuser@example.com");
         if (client == null) {
             client = new Client("Test", "User", "testuser@example.com", "password");
-            clientRepository.save(client);  // Asegúrate de guardar el cliente
+            clientRepository.saveAndFlush(client);  // Asegúrate de guardar el cliente
         }
 
         assertNotNull(client);  // Verifica que el cliente exista
 
         AccountDTO newAccount = accountService.createAccountForCurrentClient(client);
         assertNotNull(newAccount);  // Verifica que la cuenta fue creada
-        assertEquals(client.getAccounts().size(), 1);  // Verifica que el cliente tenga la nueva cuenta asociada
+        assertEquals(1, client.getAccounts().size());  // Verifica que el cliente tenga la nueva cuenta asociada
     }
-
-
 
     // Test para validar que un cliente no puede tener más de 3 cuentas
     @Test
@@ -67,7 +65,7 @@ public class AccountServiceTest {
         Client client = clientService.findByEmail("testuser@example.com");
         if (client == null) {
             client = new Client("Test", "User", "testuser@example.com", "password");
-            clientRepository.save(client);  // Asegúrate de guardar el cliente
+            clientRepository.saveAndFlush(client);  // Asegúrate de guardar el cliente
         }
 
         assertNotNull(client);
@@ -86,7 +84,6 @@ public class AccountServiceTest {
         assertEquals("You can't have more than 3 accounts", exception.getMessage());
     }
 
-
     // Test para obtener todas las cuentas en el sistema
     @Test
     @Transactional
@@ -103,7 +100,7 @@ public class AccountServiceTest {
         Account account = new Account();
         account.setNumber(utilMetod.generateAccountNumber());
         account.setCreationDate(LocalDate.now());
-        accountRepository.save(account);
+        accountRepository.saveAndFlush(account);
 
         AccountDTO accountDTO = accountService.getAccountById(account.getId());
         assertNotNull(accountDTO);
@@ -117,7 +114,7 @@ public class AccountServiceTest {
         Account account = new Account();
         account.setNumber(utilMetod.generateAccountNumber());
         account.setCreationDate(LocalDate.now());
-        accountRepository.save(account);
+        accountRepository.saveAndFlush(account);
 
         Account foundAccount = accountService.getAccountByNumber(account.getNumber());
         assertNotNull(foundAccount);
@@ -132,7 +129,7 @@ public class AccountServiceTest {
         Client client = clientService.findByEmail("testuser@example.com");
         if (client == null) {
             client = new Client("Test", "User", "testuser@example.com", "password");
-            clientRepository.save(client);  // Asegúrate de guardar el cliente
+            clientRepository.saveAndFlush(client);  // Asegúrate de guardar el cliente
         }
 
         assertNotNull(client);  // Verifica que el cliente fue creado correctamente
@@ -155,7 +152,7 @@ public class AccountServiceTest {
         Client client = clientService.findByEmail("testuser@example.com");
         if (client == null) {
             client = new Client("Test", "User", "testuser@example.com", "password");
-            clientRepository.save(client);  // Asegúrate de guardar el cliente
+            clientRepository.saveAndFlush(client);  // Asegúrate de guardar el cliente
         }
 
         Authentication authentication = mock(Authentication.class);
@@ -165,5 +162,4 @@ public class AccountServiceTest {
         assertNotNull(authenticatedClient);
         assertEquals("testuser@example.com", authenticatedClient.getEmail());  // Verifica que el cliente autenticado es correcto
     }
-
 }
