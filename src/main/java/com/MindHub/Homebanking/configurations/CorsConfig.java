@@ -1,6 +1,5 @@
 package com.MindHub.Homebanking.configurations;
 
-import io.jsonwebtoken.lang.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -13,17 +12,23 @@ import java.util.List;
 public class CorsConfig {
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList(new String[]{"http://localhost:3000","http://localhost:5173"}));
+        // Agrega solo la URL del frontend desplegado
+        configuration.setAllowedOrigins(List.of("https://homebanking-react-c55-mh-luzmieres.onrender.com"));
 
-        configuration.setAllowedMethods(Arrays.asList(new String[]{"GET", "POST", "PUT", "DELETE"}));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
 
+        // Permitir todas las cabeceras
         configuration.setAllowedHeaders(List.of("*"));
+
+        // Permitir envío de credenciales como cookies o encabezados de autenticación
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
+        // Aplica esta configuración a todas las rutas
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
