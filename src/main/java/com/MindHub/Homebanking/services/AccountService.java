@@ -13,6 +13,6 @@ public interface AccountService {
     AccountDTO getAccountById(Long id);
     Client getAuthenticatedClient(Authentication authentication);
     List<AccountDTO> getClientAccounts(Client client);
-    Account getAccountByNumber(String accountNumber);
+    Account getAccountByNumber(String accountNumber) throws Exception;
 }
 

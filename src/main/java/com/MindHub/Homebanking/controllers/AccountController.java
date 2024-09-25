@@ -41,6 +41,7 @@ public class AccountController {
         }
     }
 
+
     @GetMapping("/")
     public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         List<AccountDTO> accounts = accountService.getAllAccounts();

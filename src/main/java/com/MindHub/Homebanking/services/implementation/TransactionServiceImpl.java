@@ -28,7 +28,7 @@ public class TransactionServiceImpl implements TransactionService {
     private AccountService accountService;
 
     @Transactional
-    public void createTransaction(TransferDTO transferDTO, Client client) {
+    public void createTransaction(TransferDTO transferDTO, Client client) throws Exception {
         // Imprimir los datos recibidos para debugging
         System.out.println("Amount: " + transferDTO.getAmount());
         System.out.println("Origin Account: " + transferDTO.getOriginAccountNumber());

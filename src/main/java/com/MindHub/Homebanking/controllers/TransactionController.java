@@ -21,7 +21,7 @@ public class TransactionController {
     private ClientService clientService;
 
     @PostMapping("/")
-    public ResponseEntity<?> createTransaction(@RequestBody TransferDTO transferDTO, Authentication authentication) {
+    public ResponseEntity<?> createTransaction(@RequestBody TransferDTO transferDTO, Authentication authentication) throws Exception {
         // Imprimir los datos recibidos para debugging
         System.out.println("Amount: " + transferDTO.getAmount());
         System.out.println("Origin Account Number: " + transferDTO.getOriginAccountNumber());
@@ -29,13 +29,10 @@ public class TransactionController {
 
         Client client = clientService.findByEmail(authentication.getName());
 
-        try {
-            transactionService.createTransaction(transferDTO, client);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
-        }
+        transactionService.createTransaction(transferDTO, client);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
 
 }
 

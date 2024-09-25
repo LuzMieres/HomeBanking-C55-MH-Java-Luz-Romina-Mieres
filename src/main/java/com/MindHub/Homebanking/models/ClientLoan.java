@@ -8,13 +8,14 @@ public class ClientLoan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private double amount;
-    private int payments;
+    private int remainingPayments;  // Pagos restantes
+    private int payments;  // Número total de pagos
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "loan_id")
     private Loan loan;
 
@@ -73,6 +74,17 @@ public class ClientLoan {
         this.loan = loan;
     }
 
+    public int getRemainingPayments() {
+        return remainingPayments;
+    }
+
+    public void setRemainingPayments(int remainingPayments) {
+        this.remainingPayments = remainingPayments;
+    }
+
+    public void setPayments(int payments) {
+        this.payments = payments;
+    }
 
     @Override
     public String toString() {

@@ -40,6 +40,9 @@ public class Transaction {
         this.account = account;
     }
 
+    public Transaction(TransactionType transactionType, double v, String s, Account sourceAccount) {
+    }
+
     // Getters y setters
 
     public Long getId() {

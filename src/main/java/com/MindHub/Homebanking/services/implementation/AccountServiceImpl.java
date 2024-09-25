@@ -7,12 +7,14 @@ import com.MindHub.Homebanking.repositories.AccountRepository;
 import com.MindHub.Homebanking.services.AccountService;
 import com.MindHub.Homebanking.services.ClientService;
 import com.MindHub.Homebanking.utils.UtilMetod;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,18 +62,19 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new IllegalArgumentException("The account does not exist"));
     }
 
-    // Método para obtener la cuenta por número
-    @Override
-    public Account getAccountByNumber(String accountNumber) {
-        List<Account> accounts = accountRepository.findByNumber(accountNumber);
+    // Método para obtener la cuenta por númer
 
-        if (accounts.isEmpty()) {
-            throw new IllegalArgumentException("The account does not exist");
-        } else if (accounts.size() > 1) {
-            throw new IllegalArgumentException("Multiple accounts found with the same account number");
+    @Transactional
+    public Account getAccountByNumber(String accountNumber) throws Exception {
+            // Buscar la cuenta por su número
+        Optional<Account> account = accountRepository.findByNumber(accountNumber);
+
+            // Si no se encuentra, lanzar excepción
+        if (account.isEmpty()) {
+            throw new Exception("Account not found");
         }
 
-        return accounts.get(0);  // Devuelve la única cuenta encontrada
+        return account.get(); // Retornar la cuenta encontrada
     }
 
     @Override

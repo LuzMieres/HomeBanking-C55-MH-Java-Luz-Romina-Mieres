@@ -16,22 +16,23 @@ public class Loan {
 
     @ElementCollection
     @Column(name = "payments")
-    private List<Integer> payments = new ArrayList<>();
+    private List<Integer> payments; // Lista que representa las cuotas
+    private int remainingPayments;  // Número de cuotas restantes
 
     @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
     private List<ClientLoan> clientLoans = new ArrayList<>();
 
+    public Loan() {}
 
-    public  Loan (){
-    }
-
-    public Loan( String name, double maxAmount, List<Integer> payments) {
-
+    public Loan(String name, double maxAmount, List<Integer> payments) {
         this.name = name;
         this.maxAmount = maxAmount;
         this.payments = payments;
+        this.remainingPayments = payments.size(); // Asignar número de pagos inicial
     }
 
+
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -56,6 +57,14 @@ public class Loan {
         this.maxAmount = maxAmount;
     }
 
+    public List<ClientLoan> getClientLoans() {
+        return clientLoans;
+    }
+
+    public void setClientLoans(List<ClientLoan> clientLoans) {
+        this.clientLoans = clientLoans;
+    }
+
     public List<Integer> getPayments() {
         return payments;
     }
@@ -64,12 +73,12 @@ public class Loan {
         this.payments = payments;
     }
 
-    public List<ClientLoan> getClientLoans() {
-        return clientLoans;
+    public int getRemainingPayments() {
+        return remainingPayments;
     }
 
-    public void setClientLoans(List<ClientLoan> clientLoans) {
-        this.clientLoans = clientLoans;
+    public void setRemainingPayments(int remainingPayments) {
+        this.remainingPayments = remainingPayments;
     }
 
     @Override
@@ -79,6 +88,7 @@ public class Loan {
                 ", name='" + name + '\'' +
                 ", maxAmount=" + maxAmount +
                 ", payments=" + payments +
+                ", remainingPayments=" + remainingPayments +
                 '}';
     }
 
@@ -86,5 +96,4 @@ public class Loan {
         this.clientLoans.add(clientLoan);
         clientLoan.setLoan(this);
     }
-
 }

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,23 +104,25 @@ public class LoanServiceImpl implements LoanService {
     }
 
     // Verificar la cuenta de destino y su propiedad
+    // Verificar la cuenta de destino y su propiedad
     private Account verifyDestinationAccount(String destinationAccountNumber, Client client) {
-        List<Account> destinationAccounts = accountRepository.findByNumber(destinationAccountNumber);
+        Optional<Account> optionalAccount = accountRepository.findByNumber(destinationAccountNumber);
 
-        if (destinationAccounts.isEmpty()) {
+        // Verificar si la cuenta existe
+        if (optionalAccount.isEmpty()) {
             throw new IllegalArgumentException("The account does not exist");
-        } else if (destinationAccounts.size() > 1) {
-            throw new IllegalArgumentException("Multiple accounts found with the same account number. Please contact support.");
         }
 
-        Account destinationAccount = destinationAccounts.get(0);
+        Account destinationAccount = optionalAccount.get();
 
+        // Verificar si la cuenta pertenece al cliente autenticado
         if (!destinationAccount.getClient().equals(client)) {
             throw new IllegalArgumentException("Destination account does not belong to the authenticated client.");
         }
 
         return destinationAccount;
     }
+
 
     // Calcular el monto total con la tasa de interés
     private double calculateTotalAmount(double amount, int payments) {
@@ -138,27 +141,37 @@ public class LoanServiceImpl implements LoanService {
         }
     }
 
+    public List<Loan> getLoansByClient(Client client) {
+        List<ClientLoan> clientLoans = clientLoanRepository.findByClient(client);
+        return clientLoans.stream()
+                .map(ClientLoan::getLoan)
+                .collect(Collectors.toList());
+    }
 
-    // Método que aplica el préstamo al cliente
+// Método que aplica el préstamo al cliente
     private void applyLoanToClient(Loan loan, double amount, int payments, Account destinationAccount, double totalAmount, Client client) {
-        // Crear la transacción de crédito
+        // Crear la transacción de crédito solo con el monto solicitado
         Transaction creditTransaction = new Transaction(TransactionType.CREDIT, amount,
                 "Approved " + loan.getName() + " loan.", LocalDateTime.now(), destinationAccount);
         transactionRepository.save(creditTransaction);
 
-        // Actualizar el balance de la cuenta de destino
+        // Actualizar el balance de la cuenta de destino solo con el monto solicitado
         destinationAccount.setBalance(destinationAccount.getBalance() + amount);
         accountRepository.save(destinationAccount);
 
         // Crear y guardar la relación entre el cliente y el préstamo (ClientLoan)
-        ClientLoan clientLoan = new ClientLoan(amount, payments, client, loan);
+        // con el total a pagar (que incluye el monto solicitado más intereses)
+        ClientLoan clientLoan = new ClientLoan(totalAmount, payments, client, loan);
         clientLoanRepository.save(clientLoan);  // Guardar el ClientLoan
 
         // Asegurar que el Client y el Loan tengan referencias bidireccionales actualizadas
         client.addClientLoan(clientLoan);
         loan.getClientLoans().add(clientLoan);
+
+        // Actualizar y guardar las entidades relacionadas
         clientLoanRepository.save(clientLoan);
     }
+
 
 
 }
