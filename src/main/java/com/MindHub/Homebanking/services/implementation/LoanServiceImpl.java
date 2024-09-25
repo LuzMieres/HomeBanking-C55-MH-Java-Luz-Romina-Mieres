@@ -106,14 +106,14 @@ public class LoanServiceImpl implements LoanService {
     // Verificar la cuenta de destino y su propiedad
     // Verificar la cuenta de destino y su propiedad
     private Account verifyDestinationAccount(String destinationAccountNumber, Client client) {
-        Optional<Account> optionalAccount = accountRepository.findByNumber(destinationAccountNumber);
+        List<Account> optionalAccount = accountRepository.findByNumber(destinationAccountNumber);
 
         // Verificar si la cuenta existe
         if (optionalAccount.isEmpty()) {
             throw new IllegalArgumentException("The account does not exist");
         }
 
-        Account destinationAccount = optionalAccount.get();
+        Account destinationAccount = optionalAccount.get(0);
 
         // Verificar si la cuenta pertenece al cliente autenticado
         if (!destinationAccount.getClient().equals(client)) {

@@ -67,14 +67,14 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public Account getAccountByNumber(String accountNumber) throws Exception {
             // Buscar la cuenta por su número
-        Optional<Account> account = accountRepository.findByNumber(accountNumber);
+        List<Account> account = accountRepository.findByNumber(accountNumber);
 
             // Si no se encuentra, lanzar excepción
         if (account.isEmpty()) {
             throw new Exception("Account not found");
         }
 
-        return account.get(); // Retornar la cuenta encontrada
+        return account.get(0); // Retornar la cuenta encontrada
     }
 
     @Override

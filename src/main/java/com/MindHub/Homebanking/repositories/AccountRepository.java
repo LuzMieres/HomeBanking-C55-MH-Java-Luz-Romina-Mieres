@@ -20,5 +20,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     // Método corregido para buscar una única cuenta por su número y cliente
     Optional<Account> findByNumberAndClient(String sourceAccountNumber, Client client);
 
-    Optional<Account> findByNumber(String number);
+    List<Account> findByNumber(String number);
 }
