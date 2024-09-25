@@ -16,7 +16,7 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Agrega solo la URL del frontend desplegado
-        configuration.setAllowedOrigins(List.of("https://homebanking-react-c55-mh-luzmieres.onrender.com"));
+        configuration.setAllowedOrigins(List.of("https://homebanking-react-c55-mh-luzmieres.onrender.com","http://localhost:5173"));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
 
