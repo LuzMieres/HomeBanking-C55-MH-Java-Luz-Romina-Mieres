@@ -116,10 +116,15 @@ public class AccountServiceTest {
         account.setCreationDate(LocalDate.now());
         accountRepository.saveAndFlush(account);
 
-        Account foundAccount = accountService.getAccountByNumber(account.getNumber());
-        assertNotNull(foundAccount);
-        assertEquals(account.getNumber(), foundAccount.getNumber());  // Verifica que la cuenta obtenida por número es correcta
+        try {
+            Account foundAccount = accountService.getAccountByNumber(account.getNumber());
+            assertNotNull(foundAccount);
+            assertEquals(account.getNumber(), foundAccount.getNumber());  // Verifica que la cuenta obtenida por número es correcta
+        } catch (Exception e) {
+            fail("Exception should not have been thrown: " + e.getMessage());
+        }
     }
+
 
     // Test para obtener las cuentas de un cliente
     @Test
