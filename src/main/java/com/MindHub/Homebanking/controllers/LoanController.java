@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/loans")
@@ -28,6 +29,16 @@ public class LoanController {
     public ResponseEntity<List<LoanDTO>> getAllLoans() {
         return new ResponseEntity<>(loanService.getAllLoanDTO(), HttpStatus.OK);
     }
+
+    @GetMapping("/clientLoans")
+    public ResponseEntity<List<LoanDTO>> getClientLoans(Authentication authentication) {
+        Client client = clientService.findByEmail(authentication.getName());
+        List<LoanDTO> clientLoans = loanService.getLoansByClient(client).stream()
+                .map(LoanDTO::new)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(clientLoans, HttpStatus.OK);
+    }
+
 
     @PostMapping("/apply")
     public ResponseEntity<?> applyForLoan(@RequestBody LoanApplicationDTO loanApplicationDTO, Authentication authentication) {

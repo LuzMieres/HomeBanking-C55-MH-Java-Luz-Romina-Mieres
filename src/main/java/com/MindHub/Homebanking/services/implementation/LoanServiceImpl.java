@@ -36,6 +36,8 @@ public class LoanServiceImpl implements LoanService {
         return loanRepository.findAll();  // Obtiene todos los préstamos de la base de datos
     }
 
+
+
     @Override
     public List<LoanDTO> getAllLoanDTO() {
         List<Loan> loans = loanRepository.findAll();  // Obtiene todos los préstamos
@@ -70,6 +72,7 @@ public class LoanServiceImpl implements LoanService {
         // Aplicar el préstamo al cliente
         applyLoanToClient(loan, amount, payments, destinationAccount, totalAmount, client);
     }
+
 
     // Método para buscar un préstamo por nombre
     private Loan findLoanByName(String loanName) {
@@ -149,28 +152,28 @@ public class LoanServiceImpl implements LoanService {
     }
 
 // Método que aplica el préstamo al cliente
-    private void applyLoanToClient(Loan loan, double amount, int payments, Account destinationAccount, double totalAmount, Client client) {
-        // Crear la transacción de crédito solo con el monto solicitado
-        Transaction creditTransaction = new Transaction(TransactionType.CREDIT, amount,
-                "Approved " + loan.getName() + " loan.", LocalDateTime.now(), destinationAccount);
-        transactionRepository.save(creditTransaction);
+private void applyLoanToClient(Loan loan, double amount, int payments, Account destinationAccount, double totalAmount, Client client) {
+    // Crear la transacción de crédito solo con el monto solicitado
+    Transaction creditTransaction = new Transaction(TransactionType.CREDIT, amount,
+            "Approved " + loan.getName() + " loan.", LocalDateTime.now(), destinationAccount);
+    transactionRepository.save(creditTransaction);
 
-        // Actualizar el balance de la cuenta de destino solo con el monto solicitado
-        destinationAccount.setBalance(destinationAccount.getBalance() + amount);
-        accountRepository.save(destinationAccount);
+    // Actualizar el balance de la cuenta de destino solo con el monto solicitado
+    destinationAccount.setBalance(destinationAccount.getBalance() + amount);
+    accountRepository.save(destinationAccount);
 
-        // Crear y guardar la relación entre el cliente y el préstamo (ClientLoan)
-        // con el total a pagar (que incluye el monto solicitado más intereses)
-        ClientLoan clientLoan = new ClientLoan(totalAmount, payments, client, loan);
-        clientLoanRepository.save(clientLoan);  // Guardar el ClientLoan
+    // Crear y guardar la relación entre el cliente y el préstamo (ClientLoan)
+    ClientLoan clientLoan = new ClientLoan(totalAmount, payments, client, loan);
+    clientLoanRepository.save(clientLoan);  // Guardar el ClientLoan
 
-        // Asegurar que el Client y el Loan tengan referencias bidireccionales actualizadas
-        client.addClientLoan(clientLoan);
-        loan.getClientLoans().add(clientLoan);
+    // Asegurar que el Client y el Loan tengan referencias bidireccionales actualizadas
+    client.addClientLoan(clientLoan);
+    loan.addClientLoan(clientLoan);  // Añadir clientLoan al préstamo
 
-        // Actualizar y guardar las entidades relacionadas
-        clientLoanRepository.save(clientLoan);
-    }
+    // Actualizar y guardar las entidades relacionadas
+    clientRepository.save(client);  // Guardar el cliente actualizado
+    loanRepository.save(loan);      // Guardar el préstamo actualizado
+}
 
 
 

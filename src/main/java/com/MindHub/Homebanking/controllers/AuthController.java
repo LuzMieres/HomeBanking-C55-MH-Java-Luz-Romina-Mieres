@@ -2,11 +2,9 @@ package com.MindHub.Homebanking.controllers;
 
 import com.MindHub.Homebanking.dtos.ClientDTO;
 import com.MindHub.Homebanking.dtos.LoginDTO;
-import com.MindHub.Homebanking.dtos.PasswordChangeDTO;
 import com.MindHub.Homebanking.dtos.RegisterDTO;
 import com.MindHub.Homebanking.models.Client;
 import com.MindHub.Homebanking.services.AuthService;
-import com.MindHub.Homebanking.services.PasswordChangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +17,6 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
-
-    @Autowired
-    private PasswordChangeService passwordChangeService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
@@ -50,22 +45,12 @@ public class AuthController {
 
     @GetMapping("/current")
     public ResponseEntity<?> getClient(Authentication authentication) {
-        try {
-            ClientDTO clientDTO = authService.getCurrentClient(authentication.getName());
+        try {ClientDTO clientDTO = authService.getCurrentClient(authentication.getName());
             return ResponseEntity.ok(clientDTO);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO, Authentication authentication) {
-        try {
-            // Llamada al servicio de cambio de contraseña
-            passwordChangeService.changePassword(authentication.getName(), passwordChangeDTO);
-            return ResponseEntity.ok("Contraseña cambiada con éxito.");
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+
 }

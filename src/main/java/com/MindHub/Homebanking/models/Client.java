@@ -106,6 +106,7 @@ public class Client {
         account.setClient(this);
     }
 
+    // En Client.java
     public void addClientLoan(ClientLoan clientLoan) {
         this.clientLoans.add(clientLoan);
         clientLoan.setClient(this);

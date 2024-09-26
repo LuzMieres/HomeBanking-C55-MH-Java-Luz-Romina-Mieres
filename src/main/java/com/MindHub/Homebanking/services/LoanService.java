@@ -12,7 +12,7 @@ public interface LoanService {
     Loan getLoanById(Long id);  // Método para obtener un préstamo por ID
     LoanDTO getLoanDTO(Loan loan);  // Método para convertir un préstamo a DTO
     void applyForLoan(String loanName, double amount, int payments, String destinationAccountNumber, Client client);  // Solicitar un préstamo basado en el nombre
+
+    // Asegúrate de que este método esté declarado en la interfaz
+    List<Loan> getLoansByClient(Client client);
 }
-
-
-
